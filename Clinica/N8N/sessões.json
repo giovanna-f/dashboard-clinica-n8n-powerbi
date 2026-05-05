@@ -1,0 +1,905 @@
+{
+  "name": "sessões",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "e2045c6b-9878-4ade-bc27-bf908d9de3db",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        336
+      ],
+      "id": "55d190ba-07af-4fa1-a914-8d5bbca21e34",
+      "name": "Webhook",
+      "webhookId": "e2045c6b-9878-4ade-bc27-bf908d9de3db"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "total_mensal = 0.0\n\nfor item in _items:\n    qtd = float(item[\"json\"][\"qtd\"])\n    valor = float(item[\"json\"][\"valor\"])\n    \n    total_mensal += qtd * valor\n\nreturn [\n    {\n        \"json\": {\n            \"total_mensal\": f\"{total_mensal:.2f}\"\n        }\n    }\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        48
+      ],
+      "id": "a3c7e602-3e0e-4726-9060-a239c1063777",
+      "name": "valor_mensal"
+    },
+    {
+      "parameters": {
+        "language": "pythonNative",
+        "pythonCode": "total_qtd = 0.0\nvalor = 0.0\nnome = \"\"\n\nfor item in _items:\n    nome = item[\"json\"][\"nome\"]\n    total_qtd += float(item[\"json\"][\"qtd\"])\n    valor = float(item[\"json\"][\"valor\"])  # assume que é igual em todas\n\ntotal_final = total_qtd * valor\n\nreturn [\n    {\n        \"json\": {\n            \"nome\": nome,\n            \"qtd\": total_qtd,\n            \"valor\": valor,\n            \"total\": round(total_final, 2)\n        }\n    }\n]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        176,
+        -144
+      ],
+      "id": "976f752d-2f44-4894-9341-f3231c064038",
+      "name": "valor_individual"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        48
+      ],
+      "id": "9619d990-7f17-41a8-a8f4-2a61eccd2d7a",
+      "name": "obter_total_geral",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "nome",
+              "lookupValue": "={{ $json.query.nome }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        -144
+      ],
+      "id": "587c873a-08f5-42cf-91a9-71f459bcd349",
+      "name": "obter_paciente",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"mensagem\": \"{{ $json.mensagem }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        624,
+        240
+      ],
+      "id": "583058ff-6026-4769-bd80-800243ad371e",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"mensagem\": \"Paciente {{$json.nome}} cadastrado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        432
+      ],
+      "id": "4e5072da-64cc-461e-ace1-b36097edf9d3",
+      "name": "Paciente adicionado"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"mensagem\": \"O valor total do mês é de {{$json.total_mensal}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        48
+      ],
+      "id": "beded5d6-64d3-432c-b492-b4ea5be163fc",
+      "name": "Total mensal"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"mensagem\": \"Paciente {{$json.nome}} teve {{$json.qtd}} sessões no mês, cada uma no valor de {{$json.valor}}, sendo o valor final de {{$json.total}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        -144
+      ],
+      "id": "7a75fd8d-2937-49b1-9b30-7a88ffd5fea1",
+      "name": "Total por paciente"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"mensagem\": \"Paciente {{$json.nome}} atualizado\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        240
+      ],
+      "id": "c26aa77a-606c-4e56-a267-361fce4d75c8",
+      "name": "Paciente atualizado"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "22c57c67-5260-4f4b-a917-7e030565f977",
+              "leftValue": "={{ $json.query.nome }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -272,
+        -48
+      ],
+      "id": "d288eb2b-0f8c-471c-9909-2abaeb8a4431",
+      "name": "Se nome"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $json.query.nome }}",
+            "valor": "={{ $json.query.valor }}",
+            "qtd": "={{ $json.query.qtd }}",
+            "tipo": "={{ $json.query.tipo }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qtd",
+              "displayName": "qtd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "tipo",
+              "displayName": "tipo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        432
+      ],
+      "id": "84b10993-2cb9-441f-87b0-d67435ab60a4",
+      "name": "Adicionar paciente",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "nome": "={{ $json.query.nome }}",
+            "valor": "={{ $json.query.valor }}",
+            "qtd": "={{ $json.query.qtd }}"
+          },
+          "matchingColumns": [
+            "nome"
+          ],
+          "schema": [
+            {
+              "id": "nome",
+              "displayName": "nome",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "valor",
+              "displayName": "valor",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "qtd",
+              "displayName": "qtd",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Coluna 1",
+              "displayName": "Coluna 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "headers",
+              "displayName": "headers",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "params",
+              "displayName": "params",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "query",
+              "displayName": "query",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "webhookUrl",
+              "displayName": "webhookUrl",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "executionMode",
+              "displayName": "executionMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        240
+      ],
+      "id": "497f8c7f-7a33-4368-a6d5-2a72cf3c5999",
+      "name": "Atualizar qtd e/ou valor",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "63114b48-ce3b-47ac-b9ef-429e8caf0bf7",
+                    "leftValue": "={{ $json.query.acao?.toLowerCase() }}",
+                    "rightValue": "get",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "consulta"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2aaf22a6-be26-4c8a-be4a-018137c9f5ba",
+                    "leftValue": "={{ $json.query.acao?.toLowerCase() }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "atualiza"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3dd7b2f4-b5d0-4f49-bff2-e823051ed9df",
+                    "leftValue": "={{ $json.query.acao?.toLowerCase() }}",
+                    "rightValue": "add",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "adiciona"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b9c676cc-c535-4e79-b040-dbbc8cd1f729",
+                    "leftValue": "={{ $json.query.acao?.toLowerCase() }}",
+                    "rightValue": "delete",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Excluir"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -496,
+        304
+      ],
+      "id": "94ade465-ed4b-485c-a276-cf06cee5c17b",
+      "name": "Ação"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "nome",
+              "lookupValue": "={{ $json.query.nome }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        624
+      ],
+      "id": "d67b703f-622f-48c8-b4d7-f4d0873159d9",
+      "name": "obter_paciente1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"mensagem\": \"O paciente foi excluído\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        624
+      ],
+      "id": "d06cfcd1-15a9-4594-aa78-01cb19618578",
+      "name": "Paciente excluído"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "documentId": {
+          "__rl": true,
+          "value": "1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM",
+          "mode": "list",
+          "cachedResultName": "teste n8n",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1jdyWjAr2Z73eZbB1PFHXbH6hIFO-v7pue9SfcWLbYEM/edit#gid=0"
+        },
+        "startIndex": "={{ $json.row_number }}"
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        624
+      ],
+      "id": "4d168eb4-282b-4d93-9f9f-f852406805cf",
+      "name": "excluir paciente",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "azkLEaPvvuydfNLZ",
+          "name": "Google Sheets OAuth2 API"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Ação",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valor_mensal": {
+      "main": [
+        [
+          {
+            "node": "Total mensal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "valor_individual": {
+      "main": [
+        [
+          {
+            "node": "Total por paciente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obter_total_geral": {
+      "main": [
+        [
+          {
+            "node": "valor_mensal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obter_paciente": {
+      "main": [
+        [
+          {
+            "node": "valor_individual",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        []
+      ]
+    },
+    "Paciente adicionado": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Total mensal": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Total por paciente": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paciente atualizado": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Se nome": {
+      "main": [
+        [
+          {
+            "node": "obter_paciente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "obter_total_geral",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adicionar paciente": {
+      "main": [
+        [
+          {
+            "node": "Paciente adicionado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Atualizar qtd e/ou valor": {
+      "main": [
+        [
+          {
+            "node": "Paciente atualizado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ação": {
+      "main": [
+        [
+          {
+            "node": "Se nome",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atualizar qtd e/ou valor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Adicionar paciente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "obter_paciente1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "obter_paciente1": {
+      "main": [
+        [
+          {
+            "node": "excluir paciente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Paciente excluído": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "excluir paciente": {
+      "main": [
+        [
+          {
+            "node": "Paciente excluído",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e4c4ce08-b675-4326-92da-d7176cb7556b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ffd13551e31019500114ffec82be890389cc26fa6d7a8fc687da067f5ceb15e2"
+  },
+  "id": "yiv4bW6WNMC5ZNUc",
+  "tags": []
+}
